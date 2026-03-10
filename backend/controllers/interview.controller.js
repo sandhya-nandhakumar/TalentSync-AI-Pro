@@ -9,7 +9,8 @@ exports.scheduleInterview = (req, res) => {
     const { application_id, interview_date } = req.body;
     const recruiter_id = req.user.id;
     const token = crypto.randomUUID();
-    const meeting_link = `/interview/${token}`;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const meeting_link = `${frontendUrl}/interview/${token}`;
 
     const sql = `INSERT INTO interviews (application_id, recruiter_id, interview_date, meeting_link, token, status) VALUES (?, ?, ?, ?, ?, 'scheduled')`;
 
@@ -32,7 +33,7 @@ exports.scheduleInterview = (req, res) => {
             console.log('Fetching application for email:', { application_id, appErr, application });
             if (!appErr && application) {
                 try {
-                    const fullMeetingLink = `http://10.55.184.213:5174${meeting_link}`;
+                    const fullMeetingLink = `${frontendUrl}${meeting_link.replace(frontendUrl, '')}`;
                     console.log('Sending interview invitation:', {
                         to: application.candidate_email,
                         link: fullMeetingLink,
