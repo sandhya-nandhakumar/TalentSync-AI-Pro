@@ -73,6 +73,7 @@ const InterviewDashboard = () => {
                             interviewId={activeInterview.id}
                             candidateName={activeInterview.candidate_name}
                             candidateSkills={activeInterview.candidate_skills}
+                            jobTitle={activeInterview.job_title}
                             onComplete={() => {
                                 setActiveInterview(null);
                                 fetchInterviews();

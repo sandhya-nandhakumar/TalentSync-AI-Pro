@@ -1,6 +1,7 @@
 const db = require('../services/db');
 const crypto = require('crypto');
 const emailService = require('../services/email.service');
+const aiService = require('../services/ai.service');
 
 /**
  * Schedule a new interview
@@ -157,4 +158,17 @@ exports.getRecruiterInterviews = (req, res) => {
         }
         res.json(rows);
     });
+};
+
+/**
+ * Generate AI questions for live evaluation
+ */
+exports.generateQuestions = (req, res) => {
+    const { skills, jobTitle, experience } = req.body;
+    try {
+        const questions = aiService.generateInterviewQuestions(skills, jobTitle, experience);
+        res.json(questions);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to generate questions' });
+    }
 };

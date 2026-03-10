@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Star, Send, FileText, MessageSquare, Award, ThumbsUp, ThumbsDown, Info } from 'lucide-react';
 import axios from 'axios';
 
-const LiveEvaluation = ({ interviewId, candidateName, candidateSkills, onComplete }) => {
+const LiveEvaluation = ({ interviewId, candidateName, candidateSkills, jobTitle, onComplete }) => {
     const [questions, setQuestions] = useState({ technical: [], behavioral: [], experience: [] });
     const [evaluations, setEvaluations] = useState({});
     const [ratings, setRatings] = useState({ technical: 0, communication: 0 });
@@ -13,29 +13,24 @@ const LiveEvaluation = ({ interviewId, candidateName, candidateSkills, onComplet
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                // In a real app, this would be an API call to get generated questions
-                // For now, we use the candidate data to generate them locally or via a specialized endpoint
-                const res = await axios.get(`http://localhost:5000/api/applications`, {
+                const res = await axios.post(`${import.meta.env.VITE_API_URL}/interviews/questions`, {
+                    skills: candidateSkills || '',
+                    jobTitle: jobTitle || ''
+                }, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
 
-                // Mock question generation based on skills (mirroring backend logic)
-                const skills = candidateSkills || 'React, Node.js, SQL';
-                const skillList = skills.split(',').map(s => s.trim());
+                const formatQuestions = (arr, category) =>
+                    (arr || []).map((text, idx) => ({
+                        id: `${category}-${idx}`,
+                        text,
+                        category
+                    }));
 
                 setQuestions({
-                    technical: skillList.slice(0, 3).map(skill => ({
-                        id: `tech-${skill}`,
-                        text: `Explain the core concepts of ${skill} and how you've used it in your projects.`,
-                        category: 'technical'
-                    })),
-                    behavioral: [
-                        { id: 'beh-1', text: 'Tell me about a challenging project you worked on.', category: 'behavioral' },
-                        { id: 'beh-2', text: 'How do you handle disagreement in a team?', category: 'behavioral' }
-                    ],
-                    experience: [
-                        { id: 'exp-1', text: 'What are your career goals for the next 3 years?', category: 'experience' }
-                    ]
+                    technical: formatQuestions(res.data.technical, 'technical'),
+                    behavioral: formatQuestions(res.data.behavioral, 'behavioral'),
+                    experience: formatQuestions(res.data.experience, 'experience')
                 });
             } catch (err) {
                 console.error(err);

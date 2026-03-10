@@ -11,5 +11,6 @@ router.post('/schedule', auth, interviewController.scheduleInterview);
 router.get('/recruiter', auth, interviewController.getRecruiterInterviews);
 router.patch('/:id/status', auth, interviewController.updateInterviewStatus);
 router.post('/evaluate', auth, interviewController.submitEvaluation);
+router.post('/questions', auth, interviewController.generateQuestions);
 
 module.exports = router;

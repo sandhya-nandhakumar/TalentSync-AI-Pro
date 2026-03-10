@@ -5,8 +5,8 @@ import { Mic, MicOff, Video, VideoOff, PhoneOff, Clock, Layout } from 'lucide-re
 
 const InterviewRoom = ({ roomName, displayName, onEndCall }) => {
     const [timer, setTimer] = useState(0);
-    const [isMuted, setIsMuted] = useState(false);
-    const [isVideoOff, setIsVideoOff] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
+    const [isVideoOff, setIsVideoOff] = useState(true);
     const [api, setApi] = useState(null);
 
     useEffect(() => {
@@ -58,6 +58,7 @@ const InterviewRoom = ({ roomName, displayName, onEndCall }) => {
                     roomName={roomName}
                     configOverwrite={{
                         startWithAudioMuted: true,
+                        startWithVideoMuted: true,
                         disableModeratorIndicator: true,
                         startScreenSharing: false,
                         enableEmailInStats: false,
